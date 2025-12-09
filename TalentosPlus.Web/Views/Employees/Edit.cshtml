@@ -1,33 +1,33 @@
 @model TalentosPlus.Application.DTOs.CreateEmployeeDto
 @{
-    ViewData["Title"] = "New Employee";
+    ViewData["Title"] = "Edit Employee";
 }
 
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="glass-card">
-                <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
-                    <div class="icon-shape bg-primary text-white rounded-circle p-3 me-3">
-                        <i class="fa-solid fa-user-plus fa-lg"></i>
+                <div class="d-flex align-items-center mb-4 border-bottom border-light pb-3">
+                    <div class="icon-shape bg-warning text-white rounded-circle p-3 me-3">
+                        <i class="fa-solid fa-user-pen fa-lg"></i>
                     </div>
                     <div>
-                        <h2 class="h4 text-white fw-bold mb-0">Onboard New Employee</h2>
-                        <p class="text-muted mb-0 small">Enter the details below to create a new employee record.</p>
+                        <h2 class="h4 text-white fw-bold mb-0">Edit Employee Record</h2>
+                        <p class="text-muted mb-0 small">Update the information for the selected employee.</p>
                     </div>
                 </div>
 
-                <form asp-action="Create">
+                <form asp-action="Edit" asp-route-id="@ViewBag.Id">
                     <h6 class="text-uppercase text-secondary fw-bold small letter-spacing-1 mb-3">Personal Information</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="FirstName" class="form-label text-muted small">First Name</label>
-                            <input asp-for="FirstName" class="form-control form-control-premium" placeholder="e.g. John" />
+                            <input asp-for="FirstName" class="form-control form-control-premium" />
                             <span asp-validation-for="FirstName" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="LastName" class="form-label text-muted small">Last Name</label>
-                            <input asp-for="LastName" class="form-control form-control-premium" placeholder="e.g. Doe" />
+                            <input asp-for="LastName" class="form-control form-control-premium" />
                             <span asp-validation-for="LastName" class="text-danger small"></span>
                         </div>
                     </div>
@@ -35,14 +35,14 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="DocumentNumber" class="form-label text-muted small">Document ID</label>
-                            <input asp-for="DocumentNumber" class="form-control form-control-premium" placeholder="e.g. 12345678" />
+                            <input asp-for="DocumentNumber" class="form-control form-control-premium" />
                             <span asp-validation-for="DocumentNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="Email" class="form-label text-muted small">Email Address</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="fa-solid fa-envelope"></i></span>
-                                <input asp-for="Email" class="form-control form-control-premium" type="text" placeholder="john.doe@company.com"/>
+                                <input asp-for="Email" class="form-control form-control-premium" type="text"/>
                             </div>
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
@@ -51,7 +51,7 @@
                     <div class="row mb-4">
                         <div class="col-md-4 mb-3">
                              <label asp-for="ContactPhone" class="form-label text-muted small">Phone Number</label>
-                             <input asp-for="ContactPhone" class="form-control form-control-premium" placeholder="+1 555 000 0000" />
+                             <input asp-for="ContactPhone" class="form-control form-control-premium" />
                         </div>
                         <div class="col-md-4 mb-3">
                              <label asp-for="DateOfBirth" class="form-label text-muted small">Date of Birth</label>
@@ -59,7 +59,15 @@
                         </div>
                         <div class="col-md-4 mb-3">
                              <label asp-for="Address" class="form-label text-muted small">Address</label>
-                             <input asp-for="Address" class="form-control form-control-premium" placeholder="e.g. 123 Main St" />
+                             <input asp-for="Address" class="form-control form-control-premium" />
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                         <div class="col-md-6 mb-3">
+                            <label asp-for="Status" class="form-label text-muted small">Status</label>
+                            <select asp-for="Status" class="form-select form-control-premium" asp-items="Html.GetEnumSelectList<TalentosPlus.Domain.Entities.EmployeeStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
                         </div>
                     </div>
 
@@ -67,7 +75,8 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="Position" class="form-label text-muted small">Position / Job Title</label>
-                            <input asp-for="Position" class="form-control form-control-premium" placeholder="e.g. Software Engineer" list="positionsList" />
+                            <input asp-for="Position" class="form-control form-control-premium" list="positionsList" />
+                            <!-- Reuse datalist from Viewbag -->
                             <datalist id="positionsList">
                                 @if (ViewBag.Positions != null)
                                 {
@@ -83,7 +92,7 @@
                             <label asp-for="Salary" class="form-label text-muted small">Monthly Salary</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-transparent border-secondary text-white fw-bold">$</span>
-                                <input asp-for="Salary" class="form-control form-control-premium" type="number" step="0.01" placeholder="0.00"/>
+                                <input asp-for="Salary" class="form-control form-control-premium" type="number" step="0.01"/>
                             </div>
                         </div>
                     </div>
@@ -126,7 +135,7 @@
                             </datalist>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-12 mb-3">
                              <label asp-for="ProfessionalProfile" class="form-label text-muted small">Professional Profile</label>
@@ -136,7 +145,7 @@
 
                     <div class="d-flex justify-content-end mt-4 pt-3 border-top border-secondary">
                         <a asp-action="Index" class="btn btn-outline-light me-2">Cancel</a>
-                        <button type="submit" class="btn btn-premium px-4">Create Employee</button>
+                        <button type="submit" class="btn btn-premium px-4">Save Changes</button>
                     </div>
                 </form>
             </div>

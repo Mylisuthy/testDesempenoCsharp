@@ -3,46 +3,131 @@
     ViewData["Title"] = "Employees";
 }
 
-<div class="container mt-4">
-    <h2>Gestión de Empleados</h2>
-    <div class="row mb-3">
-        <div class="col">
-            <a asp-action="Create" class="btn btn-primary">Nuevo Empleado</a>
+
+@{
+    ViewData["Title"] = "Employees Directory";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-white mb-0">Employees Directory</h1>
+            <p class="text-muted mb-0">Manage your workforce effectively.</p>
         </div>
-        <div class="col">
-            <form asp-action="UploadExcel" method="post" enctype="multipart/form-data" class="d-flex">
-                <input type="file" name="file" class="form-control me-2" accept=".xlsx" required />
-                <button type="submit" class="btn btn-success">Importar Excel</button>
-            </form>
+        <div>
+            <a asp-action="Create" class="btn btn-premium shadow-lg">
+                <i class="fa-solid fa-plus me-2"></i> New Employee
+            </a>
         </div>
     </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Documento</th>
-                <th>Email</th>
-                <th>Cargo</th>
-                <th>Departamento</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.FirstName @item.LastName</td>
-                    <td>@item.DocumentNumber</td>
-                    <td>@item.Email</td>
-                    <td>@item.Position</td>
-                    <td>@item.DepartmentName</td>
-                    <td>
-                        <a asp-action="DownloadCv" asp-route-id="@item.Id" class="btn btn-sm btn-info">Descargar CV</a>
-                        <!-- Add Edit/Delete here -->
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="glass-card">
+        <!-- Detect Import Errors/Success -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success border-0 bg-success bg-opacity-25 text-white mb-4">
+                <i class="fa-solid fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger border-0 bg-danger bg-opacity-25 text-white mb-4">
+               <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Toolbar -->
+        <div class="row mb-4 align-items-end">
+            <div class="col-md-6">
+                <label class="text-secondary small text-uppercase fw-bold mb-2">Bulk Actions</label>
+                <form asp-action="UploadExcel" method="post" enctype="multipart/form-data" class="d-flex">
+                    <div class="input-group">
+                        <input type="file" name="file" class="form-control form-control-premium" accept=".xlsx" required />
+                        <button type="submit" class="btn btn-outline-premium">
+                            <i class="fa-solid fa-file-import me-2"></i> Import Excel
+                        </button>
+                    </div>
+                </form>
+                 <div class="mt-2">
+                    <a asp-action="ExportExcel" class="btn btn-outline-success btn-sm w-100">
+                        <i class="fa-solid fa-file-excel me-2"></i> Export Template / Data
+                    </a>
+                </div>
+            </div>
+             <div class="col-md-6 text-end">
+                 <!-- Search placeholder -->
+                 <form asp-action="Index" method="get" class="w-50 ms-auto">
+                     <div class="input-group">
+                         <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="fa-solid fa-search"></i></span>
+                         <input type="text" name="searchString" class="form-control form-control-premium" placeholder="Search employees..." value="@ViewData["CurrentFilter"]">
+                         <button class="btn btn-outline-secondary" type="submit">Search</button>
+                     </div>
+                 </form>
+             </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-premium align-middle">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Contact</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 fw-bold" style="width: 40px; height: 40px;">
+                                        @item.FirstName.Substring(0, 1)@item.LastName.Substring(0, 1)
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-white">@item.FirstName @item.LastName</div>
+                                        <div class="small text-muted">@item.DocumentNumber</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="d-block text-white">@item.Position</span>
+                                <span class="small text-muted">@item.EducationLevel</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25">
+                                    <i class="fa-solid fa-building me-1"></i> @item.DepartmentName
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.Status.ToString() == "Active")
+                                {
+                                    <span class="badge-status badge-active">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status badge-inactive">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="text-muted small"><i class="fa-solid fa-envelope me-2"></i> @item.Email</div>
+                                <div class="text-muted small"><i class="fa-solid fa-phone me-2"></i> @(item.ContactPhone ?? "N/A")</div>
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="DownloadCv" asp-route-id="@item.Id" class="btn btn-outline-light btn-sm rounded-circle" data-bs-toggle="tooltip" title="Download CV">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-light btn-sm rounded-circle ms-1" title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

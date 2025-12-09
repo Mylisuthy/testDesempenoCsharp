@@ -27,7 +27,8 @@ public class RepositoryIntegrationTests
             LastName = "Test", 
             Email = "int@test.com", 
             DocumentNumber = "999",
-            Position = "QA"
+
+            Position = new Position { Name = "QA" } // Navigation property
         };
 
         // Act

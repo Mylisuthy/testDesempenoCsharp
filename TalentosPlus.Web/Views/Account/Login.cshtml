@@ -1,0 +1,123 @@
+@model TalentosPlus.Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Log in";
+    Layout = null; // Standalone layout for login
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TalentosPlus AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        body {
+            background: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            overflow: hidden;
+        }
+        /* Animated Background */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+            opacity: 0.6;
+        }
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-indigo);
+            top: -50px;
+            left: -50px;
+        }
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-pink);
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 5s;
+        }
+        @@keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(20px) scale(1.1); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05); /* Very light glass */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="login-card">
+        <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle mb-3" style="width: 64px; height: 64px;">
+                <i class="fa-solid fa-brain fa-2x text-white"></i>
+            </div>
+            <h2 class="fw-bold mb-1">Talentos<span class="text-primary-gradient">Plus</span></h2>
+            <p class="text-muted small">AI-Powered HR Management</p>
+        </div>
+
+        <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3 text-center"></div>
+            
+            <div class="mb-4">
+                <label asp-for="Email" class="form-label small text-uppercase text-secondary fw-bold letter-spacing-1">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="fa-solid fa-envelope"></i></span>
+                    <input asp-for="Email" class="form-control form-control-premium" placeholder="name@company.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label small text-uppercase text-secondary fw-bold letter-spacing-1">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="fa-solid fa-lock"></i></span>
+                    <input asp-for="Password" class="form-control form-control-premium" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input bg-transparent border-secondary" />
+                    <label asp-for="RememberMe" class="form-check-label text-muted small">Remember me</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-premium w-100 py-2 fw-bold shadow-lg">
+                Sign In <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </form>
+        
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+</body>
+</html>

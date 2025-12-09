@@ -11,11 +11,13 @@ public class DashboardController : Controller
 {
     private readonly IDashboardService _dashboardService;
     private readonly IAiService _aiService;
+    private readonly IEmployeeService _employeeService;
 
-    public DashboardController(IDashboardService dashboardService, IAiService aiService)
+    public DashboardController(IDashboardService dashboardService, IAiService aiService, IEmployeeService employeeService)
     {
         _dashboardService = dashboardService;
         _aiService = aiService;
+        _employeeService = employeeService;
     }
 
     public async Task<IActionResult> Index()
@@ -27,13 +29,27 @@ public class DashboardController : Controller
     [HttpPost]
     public async Task<IActionResult> AskAi([FromBody] AIRequest request)
     {
+        // Gather context
         var stats = await _dashboardService.GetStatsAsync();
-        var contextJson = JsonSerializer.Serialize(stats);
+        var employees = await _employeeService.GetAllAsync();
         
-        // Also possibly get raw list of employees for better context if token limit allows, 
-        // but passing stats is safer for now effectively.
-        // Or we could pass a condensed CSV string of all employees.
+        // Simplified list to save tokens but provide value
+        var simpleList = employees.Select(e => new 
+        {
+            Name = $"{e.FirstName} {e.LastName}",
+            e.Position,
+            Department = e.DepartmentName,
+            e.Status
+        }).ToList();
 
+        var contextData = new 
+        {
+            Statistics = stats,
+            Employees = simpleList
+        };
+
+        var contextJson = JsonSerializer.Serialize(contextData);
+        
         var answer = await _aiService.AskQuestionAsync(request.Question, contextJson);
         return Json(new { answer });
     }
@@ -41,5 +57,5 @@ public class DashboardController : Controller
 
 public class AIRequest
 {
-    public string Question { get; set; }
+    public required string Question { get; set; }
 }

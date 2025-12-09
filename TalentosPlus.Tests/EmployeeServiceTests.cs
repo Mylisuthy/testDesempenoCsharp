@@ -18,6 +18,20 @@ public class EmployeeServiceTests
         var mockEmailService = new Mock<IEmailService>();
         
         mockUnitOfWork.Setup(u => u.Employees.Add(It.IsAny<Employee>()));
+        
+        // Mock Positions and EducationLevels repositories
+        var mockPositionRepo = new Mock<IGenericRepository<Position>>();
+        var mockEducationRepo = new Mock<IGenericRepository<EducationLevel>>();
+        
+        mockUnitOfWork.Setup(u => u.Positions).Returns(mockPositionRepo.Object);
+        mockUnitOfWork.Setup(u => u.EducationLevels).Returns(mockEducationRepo.Object);
+
+        // Setup FinAsync to return empty list (simulating new position/education)
+        mockPositionRepo.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Position, bool>>>()))
+            .ReturnsAsync(new List<Position>());
+        mockEducationRepo.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<EducationLevel, bool>>>()))
+            .ReturnsAsync(new List<EducationLevel>());
+
         mockUnitOfWork.Setup(u => u.CompleteAsync()).ReturnsAsync(1);
 
         var service = new EmployeeService(mockUnitOfWork.Object, mockEmailService.Object);
@@ -37,7 +51,7 @@ public class EmployeeServiceTests
 
         // Assert
         mockUnitOfWork.Verify(u => u.Employees.Add(It.IsAny<Employee>()), Times.Once);
-        mockUnitOfWork.Verify(u => u.CompleteAsync(), Times.Once);
+        mockUnitOfWork.Verify(u => u.CompleteAsync(), Times.AtLeastOnce());
         mockEmailService.Verify(e => e.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
 

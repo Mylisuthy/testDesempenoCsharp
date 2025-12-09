@@ -22,24 +22,24 @@ graph TD
     end
 
     subgraph "Presentation Layer"
-        Web[Web MVC Portal]
-        API[REST API]
+        Web["Web MVC Portal"]
+        API["REST API"]
     end
 
     subgraph "Application Core"
-        Services[Business Logic / Services]
-        Interfaces[Interfaces & Contracts]
+        Services["Business Logic / Services"]
+        Interfaces["Interfaces & Contracts"]
     end
 
     subgraph "Infrastructure Layer"
-        Repos[Repositories (EF Core)]
-        ExtServices[External Services]
-        Gemini[Google Gemini AI]
-        SMTP[Gmail SMTP]
+        Repos["Repositories (EF Core)"]
+        ExtServices["External Services"]
+        Gemini["Google Gemini AI"]
+        SMTP["Gmail SMTP"]
     end
 
     subgraph "Data Layer"
-        DB[(PostgreSQL Database)]
+        DB[("PostgreSQL Database")]
     end
 
     Admin -->|Manages| Web
@@ -124,15 +124,37 @@ usecaseDiagram
 ## Key Features
 
 ### For Administrators (Web Portal)
--   **Dashboard with AI**: Visualize stats and ask natural language questions (e.g., *"How many employees earn more than 5000?"*), powered by Google Gemini.
--   **Bulk Import**: Upload an Excel file (`Empleados.xlsx`) to register multiple employees instantly.
--   **Employee Management**: Create, edit, and manage employee records.
--   **PDF Export**: Generate professional "Hoja de Vida" (CV) PDFs for any employee.
+-   **AI-Powered Dashboard**: Visualize workforce statistics and ask natural language questions in Spanish or English (e.g., *"¿Cuántos empleados hay en Tecnología?"*, *"How many employees earn more than 5000?"*). Powered by Google Gemini with real database context.
+-   **Multi-Format Import**: 
+    -   Upload **Excel** files (`.xlsx`) to bulk-register employees
+    -   Upload **JSON** files with automatic schema detection
+    -   Robust error handling with detailed feedback
+-   **Complete Employee Management**: 
+    -   Full CRUD operations with validation
+    -   All fields supported: Personal info, Contact, Employment details, Education, Professional profile
+    -   Real-time success/error notifications
+-   **Professional PDF Export**: Generate beautifully styled "Hoja de Vida" (CV) PDFs with complete employee information, professional layout, and company branding.
+-   **Data Integrity**: Automatic email sanitization (accent removal, lowercase), duplicate detection, and UTC date normalization for PostgreSQL compatibility.
 
 ### For Employees (REST API)
 -   **Auto-Registration**: Public endpoint to register and receive a welcome email.
 -   **Secure Access**: JWT-based authentication.
 -   **Profile Management**: View personal info and download own CV.
+
+---
+
+## Recent Improvements (December 2025)
+
+### Bug Fixes & Enhancements
+-   ✅ **Fixed DateTime UTC Issue**: Resolved PostgreSQL compatibility by converting all date fields to UTC before saving
+-   ✅ **Improved Error Messages**: All error messages are now descriptive and in Spanish for better UX
+-   ✅ **Email Validation**: Relaxed client-side validation and added automatic sanitization (accent removal, lowercase)
+-   ✅ **Missing Form Fields**: Added `DateOfBirth`, `Address`, and `ProfessionalProfile` fields to Create/Edit forms
+-   ✅ **Duplicate Detection**: Pre-save checks for duplicate emails and document numbers with clear error messages
+-   ✅ **JSON Import Support**: Added full support for importing employees from JSON files
+-   ✅ **Alert System**: Implemented global success/error notifications in the UI
+-   ✅ **PDF CV Enhancement**: Upgraded to professional, comprehensive CV generation with complete data
+-   ✅ **Education Levels**: Standardized to Spanish options (Sin estudios, Bachiller, Técnico, Título Universitario, etc.)
 
 ---
 

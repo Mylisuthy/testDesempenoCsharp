@@ -1,50 +1,87 @@
 @model TalentosPlus.Application.DTOs.DashboardStatsDto
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Executive Dashboard";
 }
 
-<div class="container mt-4">
-    <h2>Dashboard RRHH</h2>
+<div class="container-fluid">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-white mb-2">Welcome back, Admin</h1>
+            <p class="text-muted lead">Here is what's happening with your workforce today.</p>
+        </div>
+    </div>
     
-    <div class="row mb-4">
+    <!-- KPI Cards -->
+    <div class="row mb-5">
         <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-header">Total Empleados</div>
-                <div class="card-body">
-                    <h5 class="card-title">@Model.TotalEmployees</h5>
+            <div class="glass-card h-100 position-relative border-0" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(16, 185, 129, 0.1));">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-uppercase text-muted letter-spacing-1 fw-bold fs-7">Total Employees</h6>
+                    <div class="icon-shape bg-primary text-white rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
                 </div>
+                <h2 class="display-4 fw-bold text-white mb-0">@Model.TotalEmployees</h2>
+                <span class="text-success small fw-bold"><i class="fa-solid fa-arrow-up"></i> +12% </span> <span class="text-muted small">since last month</span>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header">En Vacaciones</div>
-                <div class="card-body">
-                    <h5 class="card-title">@Model.EmployeesOnVacation</h5>
+            <div class="glass-card h-100 position-relative border-0" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(244, 114, 182, 0.1));">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-uppercase text-muted letter-spacing-1 fw-bold fs-7">On Vacation</h6>
+                    <div class="icon-shape bg-warning text-white rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-umbrella-beach"></i>
+                    </div>
                 </div>
+                <h2 class="display-4 fw-bold text-white mb-0">@Model.EmployeesOnVacation</h2>
+                <span class="text-white small opacity-75">Currently away</span>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header">Activos</div>
-                <div class="card-body">
-                    <h5 class="card-title">@Model.ActiveEmployees</h5>
+            <div class="glass-card h-100 position-relative border-0" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.1));">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-uppercase text-muted letter-spacing-1 fw-bold fs-7">Active Workforce</h6>
+                    <div class="icon-shape bg-success text-white rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
                 </div>
+                <h2 class="display-4 fw-bold text-white mb-0">@Model.ActiveEmployees</h2>
+                 <span class="text-muted small">Ready for deployment</span>
             </div>
         </div>
     </div>
 
+    <!-- AI Command Center -->
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    Consultas IA
-                </div>
-                <div class="card-body">
-                    <div class="input-group mb-3">
-                        <input type="text" id="aiQuestion" class="form-control" placeholder="Ej: ¿Cuántos empleados hay en Tecnología?">
-                        <button class="btn btn-outline-secondary" type="button" onclick="askAi()">Preguntar</button>
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <div class="d-flex align-items-center mb-4 border-bottom border-light pb-3">
+                    <div class="me-3">
+                        <i class="fa-solid fa-robot fa-2x text-primary"></i>
                     </div>
-                    <div id="aiAnswer" class="alert alert-info" style="display:none;"></div>
+                    <div>
+                        <h4 class="text-white fw-bold mb-0">TalentosPlus AI Assistant</h4>
+                        <p class="text-muted mb-0 small">Ask natural language questions about your organization data.</p>
+                    </div>
+                </div>
+
+                <div class="chat-interface bg-darker rounded-3 p-3 mb-3 border border-secondary" style="background: rgba(15, 23, 42, 0.5); min-height: 150px; max-height: 300px; overflow-y: auto;" id="chatWindow">
+                     <!-- Chat history placeholders -->
+                     <div class="d-flex mb-3">
+                         <div class="me-2">
+                             <i class="fa-solid fa-robot text-primary mt-1"></i>
+                         </div>
+                         <div class="bg-primary bg-opacity-10 p-2 px-3 rounded-end rounded-bottom text-white small">
+                             Hello! I am ready to answer questions about your employees. Try asking "How many employees are in IT?"
+                         </div>
+                     </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="aiQuestion" class="form-control form-control-premium" placeholder="Type your question here..." onkeypress="handleEnter(event)">
+                    <button class="btn btn-premium" type="button" onclick="askAi()">
+                        <i class="fa-solid fa-paper-plane me-2"></i> Send
+                    </button>
                 </div>
             </div>
         </div>
@@ -53,12 +90,45 @@
 
 @section Scripts {
     <script>
+        function handleEnter(e) {
+            if (e.key === 'Enter') askAi();
+        }
+
         async function askAi() {
-            const question = document.getElementById('aiQuestion').value;
-            const answerBox = document.getElementById('aiAnswer');
+            const questionInput = document.getElementById('aiQuestion');
+            const chatWindow = document.getElementById('chatWindow');
+            const question = questionInput.value;
             
-            answerBox.style.display = 'none';
             if (!question) return;
+
+            // User Message
+            const userMsgHtml = `
+                <div class="d-flex mb-3 justify-content-end">
+                     <div class="bg-secondary bg-opacity-25 p-2 px-3 rounded-start rounded-bottom text-white small text-end">
+                         ${question}
+                     </div>
+                     <div class="ms-2">
+                         <i class="fa-solid fa-circle-user text-secondary mt-1"></i>
+                     </div>
+                </div>`;
+            chatWindow.insertAdjacentHTML('beforeend', userMsgHtml);
+            questionInput.value = '';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            // Loading indicator
+            const loadingId = 'loading-' + Date.now();
+            const loadingHtml = `
+                 <div class="d-flex mb-3" id="${loadingId}">
+                     <div class="me-2">
+                         <i class="fa-solid fa-robot text-primary mt-1"></i>
+                     </div>
+                     <div class="bg-primary bg-opacity-10 p-2 px-3 rounded-end rounded-bottom text-white small">
+                         <i class="fa-solid fa-ellipsis fa-fade"></i> Thinking...
+                     </div>
+                 </div>`;
+            
+            chatWindow.insertAdjacentHTML('beforeend', loadingHtml);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
                 const response = await fetch('@Url.Action("AskAi", "Dashboard")', {
@@ -70,12 +140,28 @@
                 });
                 
                 const data = await response.json();
-                answerBox.innerText = data.answer;
-                answerBox.style.display = 'block';
+                
+                // Remove loading
+                document.getElementById(loadingId).remove();
+
+                // AI Response
+                const aiMsgHtml = `
+                     <div class="d-flex mb-3">
+                         <div class="me-2">
+                             <i class="fa-solid fa-robot text-primary mt-1"></i>
+                         </div>
+                         <div class="bg-primary bg-opacity-10 p-2 px-3 rounded-end rounded-bottom text-white small">
+                             ${data.answer}
+                         </div>
+                     </div>`;
+                chatWindow.insertAdjacentHTML('beforeend', aiMsgHtml);
+
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById(loadingId).remove();
                 alert('Error al consultar IA');
             }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     </script>
 }

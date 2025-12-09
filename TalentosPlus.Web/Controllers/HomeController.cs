@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace TalentosPlus.Web.Controllers;
 
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

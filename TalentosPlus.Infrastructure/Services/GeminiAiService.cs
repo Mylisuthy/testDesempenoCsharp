@@ -24,7 +24,21 @@ public class GeminiAiService : IAiService
             return "AI Service is not configured.";
         }
 
-        var prompt = $"Context Data (JSON format of database stats): {contextData}\n\nUser Question: {question}\n\nAnswer the user's question based strictly on the provided Context Data. Do not hallucinate.";
+        // Enhanced Prompt for better context and language support
+        var prompt = $@"
+Context Data (JSON format): 
+{contextData}
+
+User Question: 
+{question}
+
+Instructions:
+1. Answer the user's question based strictly on the provided Context Data.
+2. If the user asks in Spanish, answer in Spanish. If they ask in English, answer in English.
+3. Be professional, concise, and helpful.
+4. If the answer is not found in the data, state clearly that you don't have that information.
+5. Do not hallucinate or make up data.
+";
 
         var requestBody = new
         {
@@ -37,20 +51,39 @@ public class GeminiAiService : IAiService
         var json = JsonSerializer.Serialize(requestBody);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync($"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={apiKey}", content);
-
-        if (response.IsSuccessStatusCode)
+        try 
         {
-            var responseString = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(responseString);
-            // Parse Gemini response structure to get the text
-            if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
+            var response = await _httpClient.PostAsync($"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={apiKey}", content);
+
+            if (response.IsSuccessStatusCode)
             {
-                var text = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
-                return text ?? "No answer generated.";
+                var responseString = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(responseString);
+                
+                if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
+                {
+                    var text = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
+                    return text ?? "No answer generated.";
+                }
+            }
+            else 
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                // Structured logging in a real app, Console for now
+                Console.WriteLine($"Gemini API Error: {response.StatusCode} - {errorContent}");
+                
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    return "Error: API Key is invalid or expired. Please check configuration.";
+                
+                return $"Error connecting to AI Assistant ({response.StatusCode}). Please try again later.";
             }
         }
+        catch (Exception ex)
+        {
+             Console.WriteLine($"Gemini Exception: {ex.Message}");
+             return "An error occurred while communicating with the AI service.";
+        }
 
-        return "Error contacting AI service.";
+        return "No valid response from AI.";
     }
 }
