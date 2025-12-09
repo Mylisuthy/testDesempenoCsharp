@@ -1,0 +1,28 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: TalentosPlus.Web/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};SslMode=Require;Trust Server Certificate=true
+      - EmailSettings__SmtpServer=${SMTP_SERVER}
+      - EmailSettings__Port=${SMTP_PORT}
+      - EmailSettings__SenderEmail=${SMTP_EMAIL}
+      - EmailSettings__Password=${SMTP_PASSWORD}
+      - AiSettings__GeminiApiKey=${GEMINI_API_KEY}
+    ports:
+      - "8080:8080"
+
+  api:
+    build:
+      context: .
+      dockerfile: TalentosPlus.Api/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};SslMode=Require;Trust Server Certificate=true
+      - Jwt__Key=${JWT_KEY}
+      - EmailSettings__SmtpServer=${SMTP_SERVER}
+      - EmailSettings__Port=${SMTP_PORT}
+      - EmailSettings__SenderEmail=${SMTP_EMAIL}
+      - EmailSettings__Password=${SMTP_PASSWORD}
+    ports:
+      - "8081:8080"

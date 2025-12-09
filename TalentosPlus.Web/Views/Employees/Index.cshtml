@@ -1,0 +1,48 @@
+@model IEnumerable<TalentosPlus.Application.DTOs.EmployeeDto>
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="container mt-4">
+    <h2>Gestión de Empleados</h2>
+    <div class="row mb-3">
+        <div class="col">
+            <a asp-action="Create" class="btn btn-primary">Nuevo Empleado</a>
+        </div>
+        <div class="col">
+            <form asp-action="UploadExcel" method="post" enctype="multipart/form-data" class="d-flex">
+                <input type="file" name="file" class="form-control me-2" accept=".xlsx" required />
+                <button type="submit" class="btn btn-success">Importar Excel</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FirstName @item.LastName</td>
+                    <td>@item.DocumentNumber</td>
+                    <td>@item.Email</td>
+                    <td>@item.Position</td>
+                    <td>@item.DepartmentName</td>
+                    <td>
+                        <a asp-action="DownloadCv" asp-route-id="@item.Id" class="btn btn-sm btn-info">Descargar CV</a>
+                        <!-- Add Edit/Delete here -->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

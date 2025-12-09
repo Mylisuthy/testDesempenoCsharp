@@ -1,0 +1,22 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Build Artifacts
+bin/
+obj/
+publish/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.user
+*.suo
+.vs/
+
+# Secrets and Environment Config
+.env
+appsettings.json
+appsettings.Development.json
+docker-compose.override.yml

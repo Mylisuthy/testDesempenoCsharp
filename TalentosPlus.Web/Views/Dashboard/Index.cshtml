@@ -1,0 +1,81 @@
+@model TalentosPlus.Application.DTOs.DashboardStatsDto
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4">
+    <h2>Dashboard RRHH</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Empleados</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalEmployees</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">En Vacaciones</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.EmployeesOnVacation</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Activos</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.ActiveEmployees</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Consultas IA
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input type="text" id="aiQuestion" class="form-control" placeholder="Ej: ¿Cuántos empleados hay en Tecnología?">
+                        <button class="btn btn-outline-secondary" type="button" onclick="askAi()">Preguntar</button>
+                    </div>
+                    <div id="aiAnswer" class="alert alert-info" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function askAi() {
+            const question = document.getElementById('aiQuestion').value;
+            const answerBox = document.getElementById('aiAnswer');
+            
+            answerBox.style.display = 'none';
+            if (!question) return;
+
+            try {
+                const response = await fetch('@Url.Action("AskAi", "Dashboard")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+                
+                const data = await response.json();
+                answerBox.innerText = data.answer;
+                answerBox.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al consultar IA');
+            }
+        }
+    </script>
+}
